@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Quote Calculator App</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f2f2f2;
+}
+
+header{
+    background:#1e88e5;
+    color:white;
+    padding:16px;
+    text-align:center;
+    font-size:20px;
+}
+
+.container{
+    padding:15px;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:12px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+label{
+    font-weight:bold;
+    display:block;
+    margin-top:8px;
+}
+
+select,input{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+    margin-top:5px;
+}
+
+.removeBtn{
+    background:#e53935;
+    color:white;
+    border:none;
+    padding:10px;
+    width:100%;
+    border-radius:6px;
+    margin-top:10px;
+}
+
+.addBtn{
+    background:#43a047;
+    color:white;
+    border:none;
+    padding:14px;
+    width:100%;
+    border-radius:8px;
+    font-size:18px;
+}
+
+.totalCard{
+    background:#1e88e5;
+    color:white;
+    border-radius:10px;
+    padding:18px;
+    font-size:18px;
+}
+
+.totalLine{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:6px;
+}
+</style>
+</head>
+
+<body>
+
+<header>Quote Calculator</header>
+
+<div class="container" id="items"></div>
+
+<div class="container">
+<button class="addBtn" onclick="addItem()">➕ Add Item</button>
+</div>
+
+<div class="container totalCard">
+<div class="totalLine"><span>Subtotal</span><span>$<span id="sub">0</span></span></div>
+<div class="totalLine"><span>Commission (10%)</span><span>$<span id="comm">0</span></span></div>
+<div class="totalLine"><b>Total inc GST</b><b>$<span id="total">0</span></b></div>
+</div>
+
+<script>
+
+const options = `
+<option value="368">Patio Flyover (>30m²)</option>
+<option value="368,2000">Patio (<30m²)</option>
+<option value="468">Gable Roof (>30m²)</option>
+<option value="488">Deck - Merbau</option>
+<option value="600">Deck - Trex</option>
+<option value="508">Deck - Woodevo Std</option>
+<option value="535">Deck - Woodevo Adv</option>
+<option value="165">Concrete (>30m²)</option>
+<option value="160,2000">Concrete (<30m²)</option>
+<option value="175">Colourbond Fence</option>
+<option value="630">Glass Handrail (<10m)</option>
+<option value="525">Glass Handrail (>10m)</option>
+<option value="473">Stainless Wire (<10m)</option>
+<option value="421">Stainless Wire (>10m)</option>
+<option value="340">Pine Handrail (<10m)</option>
+<option value="290">Pine Handrail (>10m)</option>
+`;
+
+function addItem(){
+let div=document.createElement("div");
+div.className="card";
+
+div.innerHTML=`
+<label>Category</label>
+<select onchange="calc()">${options}</select>
+
+<label>Area / Length</label>
+<input type="number" value="0" oninput="calc()">
+
+<button class="removeBtn" onclick="this.parentElement.remove();calc()">Remove Item</button>
+`;
+
+document.getElementById("items").appendChild(div);
+calc();
+}
+
+function calc(){
+let cards=document.querySelectorAll(".card");
+let subtotal=0;
+
+cards.forEach(card=>{
+let sel=card.querySelector("select").value.split(",");
+let rate=parseFloat(sel[0]);
+let install=sel[1]?parseFloat(sel[1]):0;
+let qty=Number(card.querySelector("input").value);
+
+subtotal += (qty*rate)+install;
+});
+
+let commission=subtotal*0.10;
+let total=(subtotal+commission)*1.10;
+
+document.getElementById("sub").innerText=subtotal.toFixed(2);
+document.getElementById("comm").innerText=commission.toFixed(2);
+document.getElementById("total").innerText=total.toFixed(2);
+}
+
+// start with one item
+addItem();
+
+</script>
+
+</body>
+</html>
